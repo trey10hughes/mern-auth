@@ -1,0 +1,1 @@
+A fullstack app using the MERN stack with redux integrated as well. Good start for any potential large scale application.

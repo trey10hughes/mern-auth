@@ -8,51 +8,62 @@ const keys = require("../../config/keys");
 const validateRegisterInput = require("../../validation/register");
 const validateLoginInput = require("../../validation/login");
 
-// Load User model
-const User = require("../../models/User");
+// Load Employee model
+const Employee = require("../../models/Employee");
 
 
 
-// @route POST api/users/register
-// @desc Register user
+// @route POST api/employees/register
+// @desc Register employee
 // @access Public
 router.post("/register", (req, res) => {
 // Form validation
+console.log(req.body);
   const { errors, isValid } = validateRegisterInput(req.body);
   // Check validation
     if (!isValid) {
       return res.status(400).json(errors);
     }
-    User.findOne({ email: req.body.email }).then(user => {
-        if (user) {
+    Employee.findOne({ email: req.body.email }).then(employee => {
+        if (employee) {
             return res.status(400).json({ email: "Email already exists" });
         } 
 
-        const newUser = new User({
-                name: req.body.name,
-                email: req.body.email,
-                password: req.body.password
+        const newEmployee = new Employee({
+          Emp_FirstName: req.body.firstname,
+          Emp_LastName: req.body.lastname,
+          Emp_Role: undefined,
+          Emp_SecurityAccess: undefined,
+          Emp_EmploymentStatus: undefined,
+          Emp_Phone: undefined,
+          Emp_Address: undefined,
+          Emp_LocationStatus: undefined,
+          Emp_Email: req.body.email,
+          Emp_Password: req.body.password,
+          Emp_AddedDate: undefined,
                 });
 
             // Hash password before saving in database
             bcrypt.genSalt(10, (err, salt) => {
-            bcrypt.hash(newUser.password, salt, (err, hash) => {
+            bcrypt.hash(newEmployee.Emp_Password, salt, (err, hash) => {
                 if (err) throw err;
-                newUser.password = hash;
-                newUser
+                newEmployee.Emp_Password = hash;
+                newEmployee
                 .save()
-                .then(user => res.json(user))
+                .then(employee => res.json(employee))
                 .catch(err => console.log(err));
             });
             });    
     });
 });
 
-// @route POST api/users/login
-// @desc Login user and return JWT token
+// @route POST api/employees/login
+// @desc Login employee and return JWT token
 // @access Public
 router.post("/login", (req, res) => {
 // Form validation
+console.log ("login req body");
+console.log (req.body);
   const { errors, isValid } = validateLoginInput(req.body);
   // Check validation
     if (!isValid) {
@@ -61,21 +72,26 @@ router.post("/login", (req, res) => {
 
     const email = req.body.email;
     const password = req.body.password;
-  // Find user by email
-    User.findOne({ email }).then(user => {
-        // Check if user exists
-        if (!user) {
+  // Find employee by email
+    Employee.findOne({ Emp_Email: email }).then(employee => {
+        // Check if employee exists
+        if (!employee) {
+          console.log("here");
             return res.status(404).json({ emailnotfound: "Email not found" });
         }
 
         // Check password
-        bcrypt.compare(password, user.password).then(isMatch => {
+        bcrypt.compare(password, employee.Emp_Password).then(isMatch => {
             if (isMatch) {
-                // User matched
+                // Employee matched
                 // Create JWT Payload
+                console.log(employee.id);
+                console.log(employee.Emp_FirstName);
+                console.log(employee.Emp_LastName);
                 const payload = {
-                    id: user.id,
-                    name: user.name
+                    id: employee.id,
+                    firstname: employee.Emp_FirstName,
+                    lastname: employee.Emp_LastName
                 };
 
                 // Sign token

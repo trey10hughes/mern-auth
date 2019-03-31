@@ -2,14 +2,15 @@ import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { registerUser } from "../../actions/authActions";
+import { registerEmployee } from "../../actions/authActions";
 import classnames from "classnames";
 
 class Register extends Component {
   constructor() {
     super();
     this.state = {
-      name: "",
+      firstname: "",
+      lastname: "",
       email: "",
       password: "",
       password2: "",
@@ -18,7 +19,7 @@ class Register extends Component {
   }
 
   componentDidMount() {
-    // If logged in and user navigates to Register page, should redirect them to dashboard
+    // If logged in and employee navigates to Register page, should redirect them to dashboard
     if (this.props.auth.isAuthenticated) {
       this.props.history.push("/dashboard");
     }
@@ -38,14 +39,15 @@ onChange = e => {
 
 onSubmit = e => {
     e.preventDefault();
-const newUser = {
-      name: this.state.name,
+const newEmployee = {
+      firstname: this.state.firstname,
+      lastname: this.state.lastname,
       email: this.state.email,
       password: this.state.password,
       password2: this.state.password2
     };
 
-this.props.registerUser(newUser, this.props.history); 
+this.props.registerEmployee(newEmployee, this.props.history); 
   };
 
 render() {
@@ -72,16 +74,30 @@ return (
               <div className="input-field col s12">
                 <input
                   onChange={this.onChange}
-                  value={this.state.name}
-                  error={errors.name}
-                  id="name"
+                  value={this.state.firstname}
+                  error={errors.firstname}
+                  id="firstname"
                   type="text"
                   className={classnames("", {
-                    invalid: errors.name
+                    invalid: errors.firstname
                   })}
                 />
-                <label htmlFor="name">Name</label>
-                <span className="red-text">{errors.name}</span>
+                <label htmlFor="name">First Name</label>
+                <span className="red-text">{errors.firstname}</span>
+              </div>
+              <div className="input-field col s12">
+                <input
+                  onChange={this.onChange}
+                  value={this.state.lastname}
+                  error={errors.lastname}
+                  id="lastname"
+                  type="text"
+                  className={classnames("", {
+                    invalid: errors.lastname
+                  })}
+                />
+                <label htmlFor="name">Last Name</label>
+                <span className="red-text">{errors.lastname}</span>
               </div>
               <div className="input-field col s12">
                 <input
@@ -147,7 +163,7 @@ return (
   }
 }
 Register.propTypes = {
-  registerUser: PropTypes.func.isRequired,
+  registerEmployee: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired
 };
@@ -157,5 +173,5 @@ const mapStateToProps = state => ({
 });
 export default connect(
   mapStateToProps,
-  { registerUser }
+  { registerEmployee }
 )(withRouter(Register));

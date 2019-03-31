@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { loginUser } from "../../actions/authActions";
+import { loginEmployee } from "../../actions/authActions";
 import classnames from "classnames";
 
 class Login extends Component {
@@ -16,7 +16,7 @@ class Login extends Component {
   }
 
   componentDidMount() {
-    // If logged in and user navigates to Register page, should redirect them to dashboard
+    // If logged in and employee navigates to Register page, should redirect them to dashboard
     if (this.props.auth.isAuthenticated) {
       this.props.history.push("/dashboard");
     }
@@ -24,7 +24,7 @@ class Login extends Component {
 
 componentWillReceiveProps(nextProps) {
     if (nextProps.auth.isAuthenticated) {
-      this.props.history.push("/dashboard"); // push user to dashboard when they login
+      this.props.history.push("/dashboard"); // push employee to dashboard when they login
     }
 
 if (nextProps.errors) {
@@ -40,12 +40,12 @@ onChange = e => {
 
 onSubmit = e => {
     e.preventDefault();
-const userData = {
+const employeeData = {
       email: this.state.email,
       password: this.state.password
     };
 
-this.props.loginUser(userData); // since we handle the redirect within our component, we don't need to pass in this.props.history as a parameter
+this.props.loginEmployee(employeeData); // since we handle the redirect within our component, we don't need to pass in this.props.history as a parameter
   };
 
 render() {
@@ -126,7 +126,7 @@ return (
 }
 
 Login.propTypes = {
-  loginUser: PropTypes.func.isRequired,
+  loginEmployee: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired
 };
@@ -138,5 +138,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { loginUser }
+  { loginEmployee }
 )(Login);

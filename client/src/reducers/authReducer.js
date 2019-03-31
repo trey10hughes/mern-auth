@@ -1,22 +1,22 @@
-import { SET_CURRENT_USER, USER_LOADING } from "../actions/types";
+import { SET_CURRENT_EMPLOYEE, EMPLOYEE_LOADING } from "../actions/types";
 
   const isEmpty = require("is-empty");
 
   const initialState = {
     isAuthenticated: false,
-    user: {},
+    employee: {},
     loading: false
   };
 
   export default function(state = initialState, action) {
     switch (action.type) {
-      case SET_CURRENT_USER:
+      case SET_CURRENT_EMPLOYEE:
         return {
           ...state,
           isAuthenticated: !isEmpty(action.payload),
-          user: action.payload
+          employee: action.payload
         };
-      case USER_LOADING:
+      case EMPLOYEE_LOADING:
         return {
           ...state,
           loading: true

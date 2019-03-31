@@ -1,0 +1,3 @@
+node_modules
+/flasklogin/*
+package-lock.json

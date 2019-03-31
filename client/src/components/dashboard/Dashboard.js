@@ -1,24 +1,24 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { logoutUser } from "../../actions/authActions";
+import { logoutEmployee } from "../../actions/authActions";
 
 class Dashboard extends Component {
   onLogoutClick = e => {
     e.preventDefault();
-    this.props.logoutUser();
+    this.props.logoutEmployee();
   };
 
 render() {
 
-    const { user } = this.props.auth;
+    const { employee } = this.props.auth;
 
 return (
       <div style={{ height: "75vh" }} className="container valign-wrapper">
         <div className="row">
           <div className="col s12 center-align">
             <h4>
-              <b>Hey there,</b> {user.name.split(" ")[0]}
+              <b>Hey there,</b> {employee.firstname} {employee.lastname}
               <p className="flow-text grey-text text-darken-1">
                 You are logged in to Apollo 
                 <i className="material-icons orange-text text-accent-3">wb_sunny</i>
@@ -44,7 +44,7 @@ return (
 }
 
 Dashboard.propTypes = {
-  logoutUser: PropTypes.func.isRequired,
+  logoutEmployee: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired
 };
 
@@ -54,5 +54,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { logoutUser }
+  { logoutEmployee }
 )(Dashboard);

@@ -8,8 +8,8 @@ const keys = require("../../config/keys");
 const validateRegisterInput = require("../../validation/register");
 const validateLoginInput = require("../../validation/login");
 
-// Load Employee model
-const Employee = require("../../models/Employee");
+// Load Company model
+const Company = require("../../models/Company");
 
 
 
@@ -24,11 +24,12 @@ console.log(req.body);
     if (!isValid) {
       return res.status(400).json(errors);
     }
-    Employee.findOne({ email: req.body.email }).then(employee => {
+    Company.findOne({ 'Employees.Emp_Email': req.body.email }).then(employee => {
         if (employee) {
             return res.status(400).json({ email: "Email already exists" });
         } 
 
+        console.log('employee did not exist, setting up new employee');
         const newEmployee = new Employee({
           Emp_FirstName: req.body.firstname,
           Emp_LastName: req.body.lastname,
@@ -48,8 +49,11 @@ console.log(req.body);
             bcrypt.hash(newEmployee.Emp_Password, salt, (err, hash) => {
                 if (err) throw err;
                 newEmployee.Emp_Password = hash;
-                newEmployee
-                .save()
+                console.log(newEmployee)
+                Company.update(
+                  {Company_ID: 0},
+                  { $push: {Employees: newEmployee}}
+                )
                 .then(employee => res.json(employee))
                 .catch(err => console.log(err));
             });

@@ -2,28 +2,32 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 // Load Employee model
-const Employee = require("Employee");
-console.log(Employee)
+const Employee = require("./Employee");
+// console.log(Employee)
 
 // Create Schema
 const CompanySchema = new Schema({
     Company_ID: {
-    type: Int32Array,
-    required: true
+    type: Number,
+    default: 0
   },
   Company_Name: {
     type: String,
-    required: true
+    default: "Enterprise Medical Intelligence"
   },
   Company_Description: {
     type: String,
-    required: true
+    default: "clinical data to medical insights"
   },
   Company_Notes: {
     type: Date,
     default: Date.now
   },
-  Employees: [Employee]
+  Company_AuthorizedViewers: {
+    type: Array,
+    default: ["CIO","CEO","CTO"]
+  },
+  Employees: [Employee.schema]
 });
 
 module.exports = Company = mongoose.model("company", CompanySchema);

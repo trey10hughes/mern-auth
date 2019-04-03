@@ -5,6 +5,8 @@ const passport = require("passport");
 
 const employees = require("./routes/api/employees");
 
+const Company = require("./models/Company");
+
 const app = express();
 
 // Bodyparser middleware
@@ -26,6 +28,20 @@ mongoose
   )
   .then(() => console.log("MongoDB successfully connected"))
   .catch(err => console.log(err));
+
+
+
+// Check if a company already exists in db
+Company.countDocuments({Company_ID: 0}, function (err, count){ 
+  if(count>0){
+      //document exists });
+  } else {
+    // Create default company if none existed already
+    Company.create({Company_ID: undefined, Company_Name: undefined, Company_Description: undefined, Company_Notes: undefined, Company_AuthorizedViewers: undefined}, function(err, doc) {
+      // At this point the company collection is created.
+    });
+  }
+}); 
 
 // Passport middleware
 app.use(passport.initialize());

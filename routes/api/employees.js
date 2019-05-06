@@ -76,51 +76,72 @@ console.log (req.body);
 
     const email = req.body.email;
     const password = req.body.password;
-  // Find employee by email
-    Employee.findOne({ Emp_Email: email }).then(employee => {
+
+    Company.aggregate(
+      [
+        // Get just the docs that contain a shapes element where color is 'red'
+        {$match: {'Employees.Emp_Email': email}},
+        {$project: {
+            employees: {$filter: {
+                input: '$Employees',
+                as: 'employee',
+                cond: {$eq: ['$$employee.Emp_Email', email]}
+            }}
+        }}
+    ], function(err, employee) {
         // Check if employee exists
-        if (!employee) {
-          console.log("here");
+          if (!employee) {
             return res.status(404).json({ emailnotfound: "Email not found" });
-        }
+          }
 
-        // Check password
-        bcrypt.compare(password, employee.Emp_Password).then(isMatch => {
-            if (isMatch) {
-                // Employee matched
-                // Create JWT Payload
-                console.log(employee.id);
-                console.log(employee.Emp_FirstName);
-                console.log(employee.Emp_LastName);
-                const payload = {
-                    id: employee.id,
-                    firstname: employee.Emp_FirstName,
-                    lastname: employee.Emp_LastName
-                };
+          console.log("employee data here");
+          console.log(employee[0].employees[0]);
+          const employee_data = employee[0].employees[0];
 
-                // Sign token
-                jwt.sign(
-                    payload,
-                    keys.secretOrKey,
-                    {
-                    expiresIn: 31556926 // 1 year in seconds
-                    },
-                    (err, token) => {
-                    res.json({
-                        success: true,
-                        token: "Bearer " + token
-                    });
-                    }
-                );
+          // Check password
+          bcrypt.compare(password, employee_data.Emp_Password).then(isMatch => {
+            
+              if (isMatch) {
+                  // Employee matched
+                  // Create JWT Payload
+                  console.log(employee_data.id);
+                  console.log(employee_data.Emp_FirstName);
+                  console.log(employee_data.Emp_LastName);
+                  const payload = {
+                      id: employee_data._id,
+                      firstname: employee_data.Emp_FirstName,
+                      lastname: employee_data.Emp_LastName
+                  };
 
-            } else {
-            return res
-                .status(400)
-                .json({ passwordincorrect: "Password incorrect" });
-            }
-      });
-    });
-  });
+                  // Sign token
+                  jwt.sign(
+                      payload,
+                      keys.secretOrKey,
+                      {
+                      expiresIn: 31556926 // 1 year in seconds
+                      },
+                      (err, token) => {
+                      res.json({
+                          success: true,
+                          token: "Bearer " + token
+                      });
+                      }
+                  );
+
+              } else {
+              return res
+                  .status(400)
+                  .json({ passwordincorrect: "Password incorrect" });
+              }
+        });
+      })
+});
+
+  // Find employee by email
+  //   Company.findOne({"Employees.Emp_Email": email}, function(err, employee) {
+      
+  //   })
+  // });
 
   module.exports = router;
   
